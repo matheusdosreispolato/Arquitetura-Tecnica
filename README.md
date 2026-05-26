@@ -52,6 +52,20 @@ Arquitetura Tecnica/
 
 ---
 
+## Engenharia de Dados — [`/Engenharia-Dados`](./Engenharia-Dados/README.md)
+
+| Arquivo | Conteúdo |
+|---|---|
+| [01 — Conceitos e Arquitetura Medallion](./Engenharia-Dados/01-conceitos-medallion.md) | O que é Bronze/Silver/Gold, analogias para leigos, quando aplicar, nomenclatura padrão |
+| [02 — Camada Bronze](./Engenharia-Dados/02-camada-bronze.md) | Ingestão raw, hash de deduplicação, staging, controle de processamento |
+| [03 — Camada Silver](./Engenharia-Dados/03-camada-silver.md) | Validação de qualidade, MERGE incremental, tabela de rejeições, reprocessamento |
+| [04 — Camada Gold](./Engenharia-Dados/04-camada-gold.md) | Dimensões, fatos, views de consumo, tabelas materializadas, queries analíticas |
+| [05 — Pipeline e Orquestração](./Engenharia-Dados/05-pipeline-orquestracao.md) | Idempotência, marca d'água, pipeline mestre, agendamento via SQL Agent e PowerShell |
+| [06 — Apache Airflow](./Engenharia-Dados/06-airflow.md) | DAGs, operators MsSQL/S3/Python, sensors, connections, variáveis, templates Jinja, backfill |
+| [07 — Governança de Dados](./Engenharia-Dados/07-governanca-dados.md) | Catálogo, linhagem, classificação, controle de acesso, SLAs de qualidade, auditoria, retenção |
+
+---
+
 ## RDL — [`/RDL`](./RDL/README.md)
 
 | Arquivo | Conteúdo |

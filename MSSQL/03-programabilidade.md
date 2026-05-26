@@ -4,6 +4,19 @@
 
 ---
 
+## Resumo das diferenças no RDS
+
+| Recurso | 🖥️ MSSQL Padrão | ☁️ AWS RDS |
+|---|---|---|
+| `xp_cmdshell` dentro de Procedure | Disponível (se habilitado) | **Bloqueado** — use PowerShell externo |
+| CLR Procedures / Functions | Disponível | **Bloqueado** |
+| Triggers CLR | Disponível | **Bloqueado** |
+| Tabelas temporárias globais `##` | Disponível | Funciona, mas perdidas em failover Multi-AZ |
+| SQL Dinâmico com `EXEC @str` | Disponível | Disponível (preferir `sp_executesql`) |
+| Procedures do sistema (`sp_`) | Acesso total | Algumas restritas (ex: `sp_configure` limitado) |
+
+---
+
 ## 1. Stored Procedures
 
 ```sql
@@ -95,6 +108,8 @@ GO
 EXEC vendas.usp_CancelarPedido @PedidoID = 10, @Motivo = 'Solicitação do cliente';
 ```
 
+> ☁️ **AWS RDS:** `xp_cmdshell` dentro de procedures está bloqueado. Se sua procedure precisava chamar um executável ou script externo, substitua por um script PowerShell externo que invoca a procedure via `Invoke-Sqlcmd`. CLR Procedures também não estão disponíveis no RDS.
+
 ---
 
 ## 2. Funções
@@ -129,6 +144,8 @@ GO
 -- Uso
 SELECT * FROM vendas.fn_PedidosPorCliente(1) WHERE Status = 1;
 ```
+
+> ☁️ **AWS RDS:** Funções T-SQL (escalares e inline TVF) funcionam normalmente. CLR Functions (escritas em C#/VB.NET) estão bloqueadas — reescreva a lógica em T-SQL puro ou mova para a camada de aplicação.
 
 ---
 
@@ -174,6 +191,8 @@ BEGIN
 END;
 GO
 ```
+
+> ☁️ **AWS RDS:** Triggers DML (`AFTER`, `INSTEAD OF`) funcionam normalmente. Triggers CLR (código .NET no trigger) estão bloqueados. Para auditoria de dados sensíveis no RDS, prefira triggers T-SQL com gravação em tabela de log — como o exemplo acima.
 
 ---
 
@@ -284,3 +303,5 @@ ORDER BY Ano;';
 
 EXEC sp_executesql @query;
 ```
+
+> ☁️ **AWS RDS:** SQL Dinâmico funciona normalmente. Prefira sempre `sp_executesql` com parâmetros em vez de concatenação de string — além de prevenir SQL Injection, o RDS (assim como qualquer SQL Server) reutiliza melhor os planos de execução com queries parametrizadas.
